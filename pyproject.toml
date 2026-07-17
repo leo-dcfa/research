@@ -2,7 +2,9 @@
 name = "research"
 version = "0.1.0"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "numpy>=2.5.1",
+]
 
 [dependency-groups]
 dev = [
