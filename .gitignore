@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# uv
+.uv/
+
+# Manim output
+media/
+
+# OS
+.DS_Store
