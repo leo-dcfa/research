@@ -15,6 +15,11 @@ topics/
     *.py           # Manim scenes for video/animated examples
 ```
 
+## Topics
+
+- [Quantization](topics/quantization/README.md) — storing/computing numbers with fewer bits (FP32 → INT8/INT4) to shrink models and speed up inference.
+- [Simulating quantum circuits on NVIDIA GPUs](topics/quantum-simulation-on-gpu/README.md) — classically simulating qubits/circuits on NVIDIA hardware with cuQuantum, CUDA-Q, and friends.
+
 ## Setup
 
 This is a [uv](https://docs.astral.sh/uv/) project.

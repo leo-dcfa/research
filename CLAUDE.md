@@ -9,6 +9,7 @@ Guidance for Claude when working in this research repo.
 - Code samples are **Python**.
 - Add graphs/plots when I ask for a visualisation (matplotlib is the default).
 - For video / animated examples, use [Manim](https://www.manim.community/).
+- Whenever you add, remove, or rename a topic, **update the root `README.md`** so its "Topics" section lists every topic in the `topics/` directory (link + one-line description).
 
 ## Project
 
