@@ -6,7 +6,7 @@ simulations fast.
 
 ## Why a GPU helps
 
-- Simulating `n` qubits means tracking a **state vector of 2ⁿ complex amplitudes**, and every gate
+- Simulating $n$ qubits means tracking a **state vector of $2^n$ complex amplitudes**, and every gate
   is a big matrix–vector multiply over that vector.
 - That's dense, data-parallel linear algebra — exactly what GPUs are built for. Speedups of
   **10–100×** over CPU are typical for 20+ qubit circuits.
@@ -15,10 +15,10 @@ simulations fast.
 
 | Method | Cost | Good for | Qubit reach |
 |---|---|---|---|
-| **State vector** | Exact, memory = 2ⁿ amplitudes | Any circuit | ~30–36 qubits (memory-bound) |
+| **State vector** | Exact, memory $= 2^n$ amplitudes | Any circuit | ~30–36 qubits (memory-bound) |
 | **Tensor network** | Depends on entanglement | Shallow / low-entanglement circuits | 100s–1000s of qubits |
 
-**The memory wall (state vector):** amplitudes are complex.
+**The memory wall (state vector):** amplitudes are complex ($2^n$ of them).
 - `complex64` (8 bytes): **30 qubits ≈ 8.6 GB**, 33 ≈ 69 GB — each extra qubit **doubles** memory.
 - This is why past ~33 qubits you need multi-GPU, or you switch to tensor networks.
 

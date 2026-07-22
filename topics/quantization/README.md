@@ -10,20 +10,19 @@ Storing/computing numbers with fewer bits (e.g. FP32 → INT8) to shrink models 
 
 ## The core math (affine / uniform quantization)
 
-Map a real value `x` in range `[β, α]` to a `b`-bit integer. This is **affine** (a.k.a. uniform — equal step sizes):
+Map a real value $x$ in range $[\beta, \alpha]$ to a $b$-bit integer. This is **affine** (a.k.a. uniform — equal step sizes):
 
-```
-scale   s = (α − β) / (2^b − 1)          # size of one quantization step
-zero    z = round(−β / s)                # integer that maps to real 0
+$$\begin{aligned}
+s &= \frac{\alpha - \beta}{2^b - 1} && \text{scale — size of one quantization step}\\[2pt]
+z &= \operatorname{round}(-\beta / s) && \text{zero-point — integer that maps to real 0}\\[2pt]
+x_q &= \operatorname{clip}\!\big(\operatorname{round}(x/s) + z,\; 0,\; 2^b - 1\big) && \text{quantize}\\[2pt]
+\hat{x} &= s \cdot (x_q - z) && \text{dequantize}
+\end{aligned}$$
 
-quantize:    x_q = clip(round(x / s) + z,  0, 2^b − 1)
-dequantize:  x̂  = s · (x_q − z)
-```
-
-- `s` (scale) and `z` (zero-point) are the **quantization parameters** — you store them alongside the ints.
-- The error `x − x̂` is the **quantization error**, bounded by `±s/2` from rounding (plus clipping error for out-of-range values).
-- **Symmetric** (`z = 0`, range `[−α, α]`): simpler/faster, wastes a code, good for weights (roughly zero-centered).
-- **Asymmetric** (`z ≠ 0`): uses the full range, better for skewed data like post-ReLU activations (all ≥ 0).
+- $s$ (scale) and $z$ (zero-point) are the **quantization parameters** — you store them alongside the ints.
+- The error $x - \hat{x}$ is the **quantization error**, bounded by $\pm s/2$ from rounding (plus clipping error for out-of-range values).
+- **Symmetric** ($z = 0$, range $[-\alpha, \alpha]$): simpler/faster, wastes a code, good for weights (roughly zero-centered).
+- **Asymmetric** ($z \neq 0$): uses the full range, better for skewed data like post-ReLU activations (all $\geq 0$).
 
 ## Key design axes
 
@@ -31,17 +30,17 @@ dequantize:  x̂  = s · (x_q − z)
 |---|---|---|
 | **Uniformity** | Uniform (affine) vs non-uniform | Non-uniform (e.g. NF4, log, k-means codebooks) puts more levels where data is dense |
 | **Symmetry** | Symmetric vs asymmetric | Weights → symmetric; activations → asymmetric |
-| **Granularity** | Per-tensor → per-channel → per-group | Finer = one `(s,z)` per fewer weights = less error, more overhead |
+| **Granularity** | Per-tensor → per-channel → per-group | Finer = one $(s, z)$ per fewer weights = less error, more overhead |
 | **When** | PTQ vs QAT | Post-training (fast, no data/little data) vs quant-aware training (retrain, best quality) |
 | **What** | Weight-only vs weight+activation | W-only (W4A16) is easiest & most common for LLMs; W8A8 needs activation calibration |
 
 **Granularity matters most.** A single outlier weight blows up the per-tensor range and coarsens every step. Per-channel (one scale per output channel) or **per-group** (one scale per block of e.g. 32/64/128 weights) is why 4-bit LLMs work at all.
 
-## Calibration — picking the range `[β, α]`
+## Calibration — picking the range $[\beta, \alpha]$
 
 The clip range trades off two errors: too wide → coarse steps (rounding error); too narrow → clipping error. Strategies:
 
-- **Min/max**: `α = max(x)`, `β = min(x)`. Simple, but one outlier ruins it.
+- **Min/max**: $\alpha = \max(x)$, $\beta = \min(x)$. Simple, but one outlier ruins it.
 - **Percentile**: clip at e.g. 99.9th percentile — deliberately clip outliers to keep steps fine.
 - **MSE / KL-divergence**: search for the range minimizing reconstruction error or output distribution shift. What most PTQ toolkits do.
 
@@ -73,7 +72,7 @@ The clip range trades off two errors: too wide → coarse steps (rounding error)
 **2. Truly lossless (information-theoretic).** Bit-**identical** outputs — the decompressed weights reconstruct the originals exactly. This is not quantization in the lossy sense; it's **entropy coding** (compression):
 - BF16 weights don't use their 16 bits uniformly — the **exponent** field is heavily concentrated (weights cluster near 0). Entropy of the actual distribution < 16 bits.
 - **DFloat11 / lossless float compression**: Huffman-code the exponent bits, store mantissa/sign raw. Gets BF16 down to ~11 bits/param with **exact** reconstruction (GPU kernel decompresses on the fly). ~30% smaller, zero accuracy change.
-- General principle: `bits_needed ≥ entropy H(X)` (Shannon). You can losslessly compress *only* down to the data's entropy — below that, information is destroyed. So true-lossless gains are modest (~30%); the big 4× wins are inherently lossy.
+- General principle: $\text{bits needed} \geq H(X)$ (Shannon entropy). You can losslessly compress *only* down to the data's entropy — below that, information is destroyed. So true-lossless gains are modest (~30%); the big 4× wins are inherently lossy.
 
 **Bottom line:** if someone says "lossless 4-bit", they mean meaning #1 (near-lossless benchmarks). Genuine bit-exact compression (#2) can't reach 4 bits for BF16 weights — that would violate the entropy bound.
 
