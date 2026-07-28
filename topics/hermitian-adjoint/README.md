@@ -49,25 +49,68 @@ $$A = \begin{bmatrix} 1 & 2-i \\ 3i & 4 \end{bmatrix}
 \quad\Longrightarrow\quad
 A^\dagger = \begin{bmatrix} 1 & -3i \\ 2+i & 4 \end{bmatrix}$$
 
-## Bra–ket connection
+## Dirac (bra–ket) notation
 
-A **ket** $\lvert v \rangle$ is a column vector; the **bra** $\langle v \rvert$ is its adjoint:
+The name comes from splitting "bra-c-ket" $\langle \cdot \rvert \cdot \rangle$ in two. The dagger is exactly what maps one half to the other.
+
+- **Ket** $\lvert v \rangle$ — a column vector, $n \times 1$. The state.
+- **Bra** $\langle v \rvert$ — a row vector, $1 \times n$. Its adjoint (Definition 6.7):
 
 $$\langle v \rvert \equiv \lvert v \rangle^\dagger
 \qquad\qquad
 \lvert v \rangle \equiv \langle v \rvert^\dagger$$
 
-(Definition 6.7. The relationship goes both ways since $(A^\dagger)^\dagger = A$.)
+Both directions hold because $(A^\dagger)^\dagger = A$. A bra is a *functional*: feed it a ket, get a number out.
 
-So for the computational basis:
+### The computational basis
 
-$$\langle 0 \rvert = \lvert 0 \rangle^\dagger = \begin{bmatrix} 1 \\ 0 \end{bmatrix}^\dagger = \begin{bmatrix} 1 & 0 \end{bmatrix}
+$$\lvert 0 \rangle = \begin{bmatrix} 1 \\ 0 \end{bmatrix},\quad
+\lvert 1 \rangle = \begin{bmatrix} 0 \\ 1 \end{bmatrix}
+\qquad\Longrightarrow\qquad
+\langle 0 \rvert = \begin{bmatrix} 1 & 0 \end{bmatrix},\quad
+\langle 1 \rvert = \begin{bmatrix} 0 & 1 \end{bmatrix}$$
+
+(Example 6.2.) Both are real, so here the dagger is *just* a transpose. But for $\lvert v\rangle = \tfrac{1}{\sqrt2}\big(\lvert 0\rangle + i\lvert 1\rangle\big)$ you get $\langle v \rvert = \tfrac{1}{\sqrt2}\begin{bmatrix} 1 & -i \end{bmatrix}$ — the $i$ flips sign.
+
+### Products — it's all just matrix shapes
+
+| Expression | Shapes | Result | Name |
+|---|---|---|---|
+| $\langle v \rvert w \rangle$ | $(1{\times}n)(n{\times}1)$ | scalar | **inner product** / bracket |
+| $\lvert v \rangle \langle w \rvert$ | $(n{\times}1)(1{\times}n)$ | $n \times n$ matrix | **outer product** |
+| $A \lvert v \rangle$ | $(n{\times}n)(n{\times}1)$ | ket | operator acting on a state |
+| $\langle v \rvert A \lvert w \rangle$ | $(1{\times}n)(n{\times}n)(n{\times}1)$ | scalar | **matrix element** / expectation |
+
+**Inner product** — conjugate the left slot:
+
+$$\langle v \rvert w \rangle = v^\dagger w = \sum_k v_k^* w_k
 \qquad
-\langle 1 \rvert = \lvert 1 \rangle^\dagger = \begin{bmatrix} 0 \\ 1 \end{bmatrix}^\dagger = \begin{bmatrix} 0 & 1 \end{bmatrix}$$
+\langle v \rvert v \rangle = \sum_k \lvert v_k \rvert^2 \geq 0$$
 
-Both are real, so here the dagger is *just* a transpose. But for e.g. $\lvert v\rangle = \tfrac{1}{\sqrt2}(\lvert 0\rangle + i\lvert 1\rangle)$ you get $\langle v \rvert = \tfrac{1}{\sqrt2}\begin{bmatrix} 1 & -i \end{bmatrix}$ — the $i$ flips sign.
+So the norm is real and non-negative — that's the dagger earning its keep, and why amplitudes square to probabilities. Conjugate symmetry: $\langle w \rvert v \rangle = \langle v \rvert w \rangle^*$. Orthonormal basis: $\langle i \rvert j \rangle = \delta_{ij}$.
 
-This is what makes the inner product $\langle v \rvert w \rangle = v^\dagger w = \sum_k v_k^* w_k$ behave: $\langle v \rvert v \rangle = \sum_k \lvert v_k \rvert^2 \geq 0$ is a real norm, so amplitudes square to probabilities.
+**Outer product** — builds operators out of states:
+
+$$\lvert 0 \rangle \langle 0 \rvert = \begin{bmatrix} 1 \\ 0 \end{bmatrix}\begin{bmatrix} 1 & 0 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix}
+\qquad
+\lvert 0 \rangle \langle 1 \rvert = \begin{bmatrix} 0 & 1 \\ 0 & 0 \end{bmatrix}$$
+
+$\lvert v\rangle\langle v\rvert$ (unit $v$) is the **projector** onto $v$; $\big(\lvert v\rangle\langle w\rvert\big)^\dagger = \lvert w\rangle\langle v\rvert$. **Completeness**: $\sum_k \lvert k \rangle \langle k \rvert = I$, which is how you insert a resolution of the identity anywhere. Gates get written this way too, e.g. $X = \lvert 0\rangle\langle 1\rvert + \lvert 1\rangle\langle 0\rvert$.
+
+### Reading a state
+
+For $\lvert \psi \rangle = \alpha \lvert 0 \rangle + \beta \lvert 1 \rangle$ with $\lvert\alpha\rvert^2 + \lvert\beta\rvert^2 = 1$:
+
+- Amplitude of outcome $k$: $\alpha = \langle 0 \rvert \psi \rangle$, $\beta = \langle 1 \rvert \psi \rangle$.
+- **Born rule**: $\Pr(k) = \lvert \langle k \rvert \psi \rangle \rvert^2 = \langle \psi \rvert k \rangle \langle k \rvert \psi \rangle$.
+- Expectation of an observable: $\langle A \rangle = \langle \psi \rvert A \lvert \psi \rangle$ — real precisely when $A^\dagger = A$.
+- Gate then measure: $(U\lvert\psi\rangle)^\dagger = \langle\psi\rvert U^\dagger$, so $\lVert U \lvert \psi\rangle \rVert^2 = \langle \psi\rvert U^\dagger U \lvert\psi\rangle = 1$ — unitarity preserves total probability.
+
+### Daggering an expression
+
+Reverse the order, flip every bra $\leftrightarrow$ ket, conjugate the scalars, dagger the operators:
+
+$$\big(\alpha\, \langle v \rvert A \lvert w \rangle\big)^\dagger = \alpha^* \langle w \rvert A^\dagger \lvert v \rangle$$
 
 ## Properties worth memorising
 
@@ -105,6 +148,18 @@ np.allclose(H.conj().T @ H, np.eye(2))        # True  -> unitary
 w = np.array([[0], [1], [1j]])
 braket = (v.conj().T @ w).item()               # complex scalar
 norm_sq = (v.conj().T @ v).item().real         # always real >= 0
+
+# Bra-ket: kets are columns, bras are their adjoint
+ket0, ket1 = np.array([[1], [0]]), np.array([[0], [1]])
+bra0 = ket0.conj().T                           # <0| = [[1, 0]]
+
+# Outer product |0><1| -> matrix;  X = |0><1| + |1><0|
+X = ket0 @ ket1.conj().T + ket1 @ ket0.conj().T
+
+psi = np.array([[1], [1j]]) / np.sqrt(2)       # |psi> = (|0> + i|1>)/sqrt(2)
+amp0 = (bra0 @ psi).item()                     # <0|psi>  -> amplitude
+prob0 = abs(amp0) ** 2                         # Born rule -> 0.5
+exp_X = (psi.conj().T @ X @ psi).item().real   # <psi|X|psi>, real since X† = X
 ```
 
 See [`adjoint.py`](adjoint.py) for a runnable version with the examples above.
