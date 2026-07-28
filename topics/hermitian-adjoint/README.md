@@ -6,28 +6,30 @@ The complex-vector-space replacement for "transpose". Written $A^\dagger$ ("A da
 
 For $z = a + bi$ with $a, b \in \mathbb{R}$, the conjugate is
 
-$$z^* = \overline{z} = a - bi$$
+$$z^\ast = \overline{z} = a - bi$$
 
 i.e. **flip the sign of the imaginary part**. Geometrically: reflect across the real axis.
 
-- $(1 + i)^* = 1 - i$, $(2 + 3i)^* = 2 - 3i$, $\;i^* = -i$, $\;5^* = 5$ (reals are their own conjugate).
-- $z z^* = a^2 + b^2 = \lvert z \rvert^2$ — always real and $\geq 0$. This is why it shows up in inner products/probabilities.
-- In polar form $z = re^{i\theta} \Rightarrow z^* = re^{-i\theta}$ (negate the phase).
-- Rules: $(z + w)^* = z^* + w^*$, $(zw)^* = z^* w^*$, $(z^*)^* = z$.
+- $(1 + i)^\ast = 1 - i$, $(2 + 3i)^\ast = 2 - 3i$, $\;i^\ast = -i$, $\;5^\ast = 5$ (reals are their own conjugate).
+- $z z^\ast = a^2 + b^2 = \lvert z \rvert^2$ — always real and $\geq 0$. This is why it shows up in inner products/probabilities.
+- In polar form $z = re^{i\theta} \Rightarrow z^\ast = re^{-i\theta}$ (negate the phase).
+- Rules: $(z + w)^\ast = z^\ast + w^\ast$, $(zw)^\ast = z^\ast w^\ast$, $(z^\ast)^\ast = z$.
 
 ## Definition
 
 For a matrix or vector $A$, the Hermitian adjoint (a.k.a. **conjugate transpose**, adjoint) is
 
-$$A^\dagger \equiv (A^*)^T = (A^T)^*$$
+$$A^\dagger \equiv (A^\ast)^T = (A^T)^\ast$$
 
-Conjugate every entry, then transpose — order doesn't matter. Entry-wise: $(A^\dagger)_{ij} = (A_{ji})^*$.
+Conjugate every entry, then transpose — order doesn't matter. Entry-wise:
+
+$$(A^\dagger)_{ij} = (A_{ji})^\ast$$
 
 For a column vector $v \in \mathbb{C}^n$:
 
 $$v = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_n \end{bmatrix}
 \quad\Longrightarrow\quad
-v^\dagger = \begin{bmatrix} v_1^* & v_2^* & \cdots & v_n^* \end{bmatrix}$$
+v^\dagger = \begin{bmatrix} v_1^\ast & v_2^\ast & \cdots & v_n^\ast \end{bmatrix}$$
 
 A column becomes a row, and every entry gets conjugated.
 
@@ -41,7 +43,7 @@ v^\dagger = \begin{bmatrix} 1 & -i & 2 - 3i \end{bmatrix}$$
 
 **Row → column**:
 
-$$\left( \begin{bmatrix} 1+i \\ 1-i \end{bmatrix}^{\,T} \right)^{*} = \begin{bmatrix} 1+i & 1-i \end{bmatrix}^{*} = \begin{bmatrix} 1-i & 1+i \end{bmatrix}$$
+$$\left( \begin{bmatrix} 1+i \\ 1-i \end{bmatrix}^{\,T} \right)^{\ast} = \begin{bmatrix} 1+i & 1-i \end{bmatrix}^{\ast} = \begin{bmatrix} 1-i & 1+i \end{bmatrix}$$
 
 **Matrix**:
 
@@ -83,11 +85,11 @@ $$\lvert 0 \rangle = \begin{bmatrix} 1 \\ 0 \end{bmatrix},\quad
 
 **Inner product** — conjugate the left slot:
 
-$$\langle v \rvert w \rangle = v^\dagger w = \sum_k v_k^* w_k
+$$\langle v \rvert w \rangle = v^\dagger w = \sum_k v_k^\ast w_k
 \qquad
 \langle v \rvert v \rangle = \sum_k \lvert v_k \rvert^2 \geq 0$$
 
-So the norm is real and non-negative — that's the dagger earning its keep, and why amplitudes square to probabilities. Conjugate symmetry: $\langle w \rvert v \rangle = \langle v \rvert w \rangle^*$. Orthonormal basis: $\langle i \rvert j \rangle = \delta_{ij}$.
+So the norm is real and non-negative — that's the dagger earning its keep, and why amplitudes square to probabilities. Conjugate symmetry: $\langle w \rvert v \rangle = \langle v \rvert w \rangle^\ast$. Orthonormal basis: $\langle i \rvert j \rangle = \delta_{ij}$.
 
 **Outer product** — builds operators out of states:
 
@@ -110,14 +112,14 @@ For $\lvert \psi \rangle = \alpha \lvert 0 \rangle + \beta \lvert 1 \rangle$ wit
 
 Reverse the order, flip every bra $\leftrightarrow$ ket, conjugate the scalars, dagger the operators:
 
-$$\big(\alpha\, \langle v \rvert A \lvert w \rangle\big)^\dagger = \alpha^* \langle w \rvert A^\dagger \lvert v \rangle$$
+$$\big(\alpha\, \langle v \rvert A \lvert w \rangle\big)^\dagger = \alpha^\ast \langle w \rvert A^\dagger \lvert v \rangle$$
 
 ## Properties worth memorising
 
 | Property | Statement |
 |---|---|
 | Involution | $(A^\dagger)^\dagger = A$ |
-| Anti-linearity | $(\alpha A)^\dagger = \alpha^* A^\dagger$ — the scalar conjugates! |
+| Anti-linearity | $(\alpha A)^\dagger = \alpha^\ast A^\dagger$ — the scalar conjugates! |
 | Additivity | $(A + B)^\dagger = A^\dagger + B^\dagger$ |
 | Reverses products | $(AB)^\dagger = B^\dagger A^\dagger$ (so $(A\lvert v\rangle)^\dagger = \langle v \rvert A^\dagger$) |
 | Inverse | $(A^{-1})^\dagger = (A^\dagger)^{-1}$ |
@@ -167,6 +169,6 @@ See [`adjoint.py`](adjoint.py) for a runnable version with the examples above.
 ## Gotchas
 
 - `.T` alone is **not** the adjoint for complex arrays — a silent, very common bug. Always `.conj().T`.
-- Anti-linearity: pulling a scalar out of a bra conjugates it. $\langle \alpha v \rvert = \alpha^* \langle v \rvert$, while $\lvert \alpha v\rangle = \alpha \lvert v \rangle$.
+- Anti-linearity: pulling a scalar out of a bra conjugates it. $\langle \alpha v \rvert = \alpha^\ast \langle v \rvert$, while $\lvert \alpha v\rangle = \alpha \lvert v \rangle$.
 - $(AB)^\dagger$ **reverses** the order. Same as transpose/inverse.
 - "Adjoint" also means the classical adjugate (cofactor matrix) in older linear-algebra texts. Different thing — in QC it always means conjugate transpose.

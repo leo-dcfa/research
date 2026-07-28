@@ -239,7 +239,7 @@ To do this in $n$ dimensions with no $\mathbb{R}^3$ to sit inside, you need the 
 
 ### Cotangent space and tensors
 
-- $T_p^*M$: linear maps $T_pM \to \mathbb{R}$ (**covectors**, **1-forms**), basis $\{dx^\mu\}$ dual to $\{\partial_\mu\}$: $\;dx^\mu(\partial_\nu) = \delta^\mu_\nu$. The gradient $df = \partial_\mu f\, dx^\mu$ is the canonical 1-form.
+- $T_p^\ast M$: linear maps $T_pM \to \mathbb{R}$ (**covectors**, **1-forms**), basis $\{dx^\mu\}$ dual to $\{\partial_\mu\}$: $\;dx^\mu(\partial_\nu) = \delta^\mu_\nu$. The gradient $df = \partial_\mu f\, dx^\mu$ is the canonical 1-form.
 - A **$(k,l)$ tensor** is a multilinear map eating $k$ covectors and $l$ vectors:
 
 $$T = T^{\mu_1\dots\mu_k}{}_{\nu_1\dots\nu_l}\; \partial_{\mu_1}\!\otimes\cdots\otimes dx^{\nu_l}$$
